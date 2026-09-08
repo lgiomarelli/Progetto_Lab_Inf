@@ -1,0 +1,44 @@
+#include <iostream>
+#include <fstream>
+
+int main() {
+    int N;
+    std::cout << "Inserisci il valore di N: ";
+    if (!(std::cin >> N) || N <= 0) 
+    {
+        std::cerr << "Valore di N non valido!" << std::endl;
+        return 1;
+    }
+    
+    // Calcolo del passo h. Usiamo 1.0 per forzare la divisione in virgola mobile
+    double h = 1.0 / (N + 1.0);
+    int n = 0; // Indice progressivo che parte da 0
+    
+    // Apro il file in scrittura
+    std::ofstream coords_file("coords.txt");
+    // Controllo se il file è stato aperto correttamente
+    if (!coords_file.is_open()) {
+        std::cerr << "Errore nell'apertura del file!" << std::endl;
+        return 1;
+    }
+    // Doppio ciclo per i punti interni (da 1 a N); per come ho ordinato i cicli for sto di fatto tenendo ferme le colonne e scorrendo le righe per ogni colonna
+    for (int i = 1; i <= N; ++i) {
+        for (int j = 1; j <= N; ++j) {
+            
+            // Calcolo le coordinate spaziali
+            double x = i * h;
+            double y = j * h;
+            
+            // Scrivo la riga nel file txt nel formato richiesto: n i j x y
+            coords_file << n << " " << i << " " << j << " " << x << " " << y << "\n";
+            
+            // Incremento l'indice progressivo
+            n++;
+        }
+ }
+    
+    coords_file.close();
+    std::cout << "File coords.txt generato con successo. Nodi totali: " << n << std::endl;
+    
+    return 0;
+}
