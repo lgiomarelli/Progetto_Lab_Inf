@@ -13,11 +13,18 @@ int main() {
     // Calcolo del passo h. Usiamo 1.0 per forzare la divisione in virgola mobile
     double h = 1.0 / (N + 1.0);
     int n = 0; // Indice progressivo che parte da 0
+    int edge_count = 0; //Contatore archi che parte da 0
     
-    // Apro il file in scrittura
+    // Apro il file in scrittura per i nodi
     std::ofstream coords_file("coords.txt");
-    // Controllo se il file è stato aperto correttamente
+    // Apro il file in scrittura per gli archi
+    std::ofstream conn_file("connectivity.txt");
+    // Controllo se i file sono stati aperti correttamente
     if (!coords_file.is_open()) {
+        std::cerr << "Errore nell'apertura del file!" << std::endl;
+        return 1;
+    }
+    if (!conn_file.is_open()) {
         std::cerr << "Errore nell'apertura del file!" << std::endl;
         return 1;
     }
@@ -36,11 +43,30 @@ int main() {
             
             // Incremento l'indice progressivo
             n++;
+
+            // Genero le connessioni
+            // Connessioni orizzontali (verso destra)
+            if (i < N)
+            {
+                int n_right = n + N;
+                conn_file << edge_count << " " << n << " " << n_right << "\n";
+                edge_count++;
+            }
+            // Connessioni verticali (verso l'alto)
+            if (j < N)
+            {
+                int n_up = n + 1;
+                conn_file << edge_count << " " << n << " " << n_up << "\n";
+                edge_count++;
+            }
         }
     }
     
     coords_file.close();
+    conn_file.close();
+
     std::cout << "File coords.txt generato con successo. Nodi totali: " << n << std::endl;
+    std::cout << "File connectivity.txt generato con successo. Archi totali: " << edge_count << std::endl;
     
     return 0;
 }
