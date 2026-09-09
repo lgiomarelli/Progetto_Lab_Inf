@@ -22,8 +22,10 @@ int main() {
         return 1;
     }
     // Doppio ciclo per i punti interni (da 1 a N); per come ho ordinato i cicli for sto di fatto tenendo ferme le colonne e scorrendo le righe per ogni colonna
-    for (int i = 1; i <= N; ++i) {
-        for (int j = 1; j <= N; ++j) {
+    for (int i = 1; i <= N; ++i) 
+    {
+        for (int j = 1; j <= N; ++j) 
+        {
             
             // Calcolo le coordinate spaziali
             double x = i * h;
@@ -35,7 +37,7 @@ int main() {
             // Incremento l'indice progressivo
             n++;
         }
- }
+    }
     
     coords_file.close();
     std::cout << "File coords.txt generato con successo. Nodi totali: " << n << std::endl;
