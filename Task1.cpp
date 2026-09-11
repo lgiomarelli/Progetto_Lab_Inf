@@ -42,7 +42,7 @@ int main() {
             coords_file << n << " " << i << " " << j << " " << x << " " << y << "\n";
             
             // Incremento l'indice progressivo
-            n++;
+            //n++; errore: non incrementare n qui, altrimenti non corrisponde all'indice progressivo dei nodi
 
             // Genero le connessioni
             // Connessioni orizzontali (verso destra)
@@ -59,6 +59,7 @@ int main() {
                 conn_file << edge_count << " " << n << " " << n_up << "\n";
                 edge_count++;
             }
+            n++; // Incremento l'indice progressivo alla fine del ciclo interno, così che corrisponda all'indice del nodo corrente
         }
     }
     
