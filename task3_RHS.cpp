@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <iomanip>
 
 //Struttura per rappresentare un nodo con i suoi attributi
 struct Node 
@@ -21,7 +22,8 @@ double eval_f(double x, double y)
 
 
 // Condizione al contorno unica applicata uniformemente a tutti i bordi
-double eval_u_boundary(double x, double y, bool is_zero, double const_val) {
+double eval_u_boundary(double x, double y, bool is_zero, double const_val) 
+{
     if (is_zero) 
     {
         return 0.0; // Bordo omogeneo (u = 0 dappertutto)
@@ -29,8 +31,9 @@ double eval_u_boundary(double x, double y, bool is_zero, double const_val) {
     return const_val; // Stesso valore costante applicato a tutti i bordi
 }
 
-int main() {
-    // 1. Lettura di coords.txt con controllo dell'apertura del file
+int main() 
+{
+    // Lettura di coords.txt con controllo dell'apertura del file
     std::ifstream coords_file("coords.txt");
     if (!coords_file.is_open()) 
     {
@@ -49,11 +52,13 @@ int main() {
     int total_nodes = nodes.size();
     if (total_nodes == 0) return 1;
 
-    // Parametri griglia e fisici
-    int N = static_cast<int>(std::round(std::sqrt(total_nodes))); //Calcolo N come radice quadrata del numero totale di nodi
+// Parametri griglia e fisici
+    int N = static_cast<int>(std::round(std::sqrt(total_nodes)));
     double h = 1.0 / (N + 1.0);
-    double k = 0.01;            // Conducibilita termica
-    double factor = (h * h) / k; // Coefficiente h^2 / k
+    double kappa = 0.01; // Conducibilita termica
+    
+    // Coefficiente con cui il valore di bordo u_0 viene spostato al RHS: - (kappa / h^2)
+    double boundary_coeff = -kappa / (h * h);
 
     // Lettura di ordering.txt per la permutazione
     std::ifstream ordering_file("ordering.txt");
@@ -97,24 +102,24 @@ int main() {
         int idx = node.n;
 
         // Contributo della sorgente termica: (h^2 / k) * f(x, y)
-        b_orig[idx] = factor * eval_f(node.x, node.y);
+        b_orig[idx] =  -eval_f(node.x, node.y);
 
         // Aggiunta contributi dei bordi vicini
         if (node.i == 1) 
         { // Bordo Sinistro (x = 0)
-            b_orig[idx] += eval_u_boundary(0.0, node.y, is_zero, const_val);
+            b_orig[idx] += boundary_coeff * eval_u_boundary(0.0, node.y, is_zero, const_val);
         }
         if (node.i == N) 
         { // Bordo Destro (x = 1)
-            b_orig[idx] += eval_u_boundary(1.0, node.y, is_zero, const_val);
+            b_orig[idx] += boundary_coeff * eval_u_boundary(1.0, node.y, is_zero, const_val);
         }
         if (node.j == 1) 
         { // Bordo Inferiore (y = 0)
-            b_orig[idx] += eval_u_boundary(node.x, 0.0, is_zero, const_val);
+            b_orig[idx] += boundary_coeff * eval_u_boundary(node.x, 0.0, is_zero, const_val);
         }
         if (node.j == N) 
         { // Bordo Superiore (y = 1)
-            b_orig[idx] += eval_u_boundary(node.x, 1.0, is_zero, const_val);
+            b_orig[idx] += boundary_coeff * eval_u_boundary(node.x, 1.0, is_zero, const_val);
         }
 
         // Mappatura sul vettore riordinato
@@ -124,14 +129,18 @@ int main() {
 
     // Scrittura su file
     std::ofstream out_orig("rhs_orig.txt");
-    for (int i = 0; i < total_nodes; ++i) {
-        out_orig << i << " " << b_orig[i] << "\n";
+    out_orig << std::setprecision(12);
+    for (int i = 0; i < total_nodes; ++i)
+    {
+        out_orig << b_orig[i] << "\n";
     }
     out_orig.close();
 
     std::ofstream out_reordered("rhs_reordered.txt");
-    for (int i = 0; i < total_nodes; ++i) {
-        out_reordered << i << " " << b_reordered[i] << "\n";
+    out_reordered << std::setprecision(12);
+    for (int i = 0; i < total_nodes; ++i) 
+    {
+        out_reordered << b_reordered[i] << "\n";
     }
     out_reordered.close();
 

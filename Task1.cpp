@@ -41,8 +41,6 @@ int main() {
             // Scrivo la riga nel file txt nel formato richiesto: n i j x y
             coords_file << n << " " << i << " " << j << " " << x << " " << y << "\n";
             
-            // Incremento l'indice progressivo
-            //n++; errore: non incrementare n qui, altrimenti non corrisponde all'indice progressivo dei nodi
 
             // Genero le connessioni
             // Connessioni orizzontali (verso destra)

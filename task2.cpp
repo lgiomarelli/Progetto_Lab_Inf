@@ -24,8 +24,8 @@ double get_median_coord(const std::vector<Node>& subset, bool split_x)
     {
         return std::abs(a - b) < 1e-9;
     }), coords.end());
-    // ritorno la mediana delle coordinate ordinate
-    return coords[coords.size() / 2];
+    // restituisco la mediana delle coordinate ordinate
+    return coords[coords.size() / 2]; //Il risultato viene troncato eliminando la parte decimale
 }
 // creo una funzione ricorsiva per eseguire la nested dissection
 void compute_nested_dissection(const std::vector<Node>& subset, bool split_x, std::vector<int>& ordering) 
@@ -82,7 +82,7 @@ int main()
     
     // creo un vettore per memorizzare l'ordinamento dei nodi e richiamo l'algoritmo di riordinamento
     std::vector<int> ordering;
-    compute_nested_dissection(nodes, true, ordering);
+    compute_nested_dissection(nodes, true, ordering); //dal momento che boolean split_x è true, la prima divisione avverrà in base alla coordinata x
 
     // Apro il file in scrittura per l'ordinamento dei nodi
     std::ofstream out("ordering.txt");

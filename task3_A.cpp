@@ -3,6 +3,8 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <cmath>
+#include <iomanip>
 
 // Struttura per rappresentare una tripla (riga, colonna, valore)
 struct Triplet {
@@ -19,7 +21,7 @@ bool compareTriplets(const Triplet& a, const Triplet& b) {
 
 int main() 
 {
-    // 1. Conteggio del numero totale di nodi da coords.txt
+    //Apertura del file e conteggio del numero totale di nodi da coords.txt
     std::ifstream coords_file("coords.txt");
     if (!coords_file.is_open()) 
     {
@@ -35,7 +37,15 @@ int main()
     }
     coords_file.close();
 
-    // 2. Lettura di ordering.txt (mappa perm[n] = m)
+    // Calcolo di N, h e dei coefficienti della matrice
+    int N = static_cast<int>(std::round(std::sqrt(total_nodes)));
+    double h = 1.0 / (N + 1.0);
+    double kappa = 0.01;
+
+    double diag_val = -4.0 * kappa / (h * h);
+    double off_val  =  1.0 * kappa / (h * h);
+
+    // Lettura di ordering.txt (mappa perm[n] = m)
     std::ifstream ordering_file("ordering.txt");
     if (!ordering_file.is_open()) 
     {
@@ -57,17 +67,17 @@ int main()
     std::vector<Triplet> A_orig; // Vettore per memorizzare le triplette della matrice A_orig
     std::vector<Triplet> A_reordered; // Vettore per memorizzare le triplette della matrice A_reordered
 
-    // 3. Diagonale principale: A(i, i) = +4.0
+    // Diagonale principale: A(i, i) = +4.0
     for (int i = 0; i < total_nodes; ++i) 
     {
-        A_orig.push_back({i, i, 4.0});
+        A_orig.push_back({i, i, diag_val});
 
         // Matrice riordinata con indici mappati da perm
         int m_i = perm[i];
-        A_reordered.push_back({m_i, m_i, 4.0});
+        A_reordered.push_back({m_i, m_i, diag_val});
     }
 
-    // 4. Lettura diretta di connectivity.txt (3 colonne: edge_id, nA, nB)
+    // Lettura diretta di connectivity.txt (3 colonne: edge_id, nA, nB)
     std::ifstream conn_file("connectivity.txt");
     if (!conn_file.is_open()) 
     {
@@ -79,29 +89,29 @@ int main()
     while (conn_file >> edge_id >> nA >> nB) 
     {
         // Inserimento diretto nella matrice (matrice originale)
-        A_orig.push_back({nA, nB, -1.0});
-        A_orig.push_back({nB, nA, -1.0});
+        A_orig.push_back({nA, nB, off_val});
+        A_orig.push_back({nB, nA, off_val});
 
         // Matrice riordinata con indici mappati da perm (ma e mb sono i nuovi nodi adiacenti)
         int mA = perm[nA];
         int mB = perm[nB];
-        A_reordered.push_back({mA, mB, -1.0});
-        A_reordered.push_back({mB, mA, -1.0});
+        A_reordered.push_back({mA, mB, off_val});
+        A_reordered.push_back({mB, mA, off_val});
     }
     conn_file.close();
 
-    // 5. Ordinamento delle triplette
+    // Ordinamento delle triplette
     std::sort(A_orig.begin(), A_orig.end(), compareTriplets);
     std::sort(A_reordered.begin(), A_reordered.end(), compareTriplets);
 
-    // 6. Scrittura del file di output A_orig.txt
+    // Scrittura del file di output A_orig.txt
     std::ofstream out_orig("A_orig.txt");
     for (const auto& t : A_orig) 
     {
         out_orig << t.row << " " << t.col << " " << t.val << "\n";
     }
     out_orig.close();
-    // 7. Scrittura del file di output A_reordered.txt
+    // Scrittura del file di output A_reordered.txt
     std::ofstream out_reordered("A_reordered.txt");
     for (const auto& t : A_reordered) 
     {
