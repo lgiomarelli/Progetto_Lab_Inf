@@ -58,7 +58,7 @@ int main()
     double kappa = 0.01; // Conducibilita termica
     
     // Coefficiente con cui il valore di bordo u_0 viene spostato al RHS: - (kappa / h^2)
-    double boundary_coeff = -kappa / (h * h);
+    double boundary_coeff = -kappa / (h * h); 
 
     // Lettura di ordering.txt per la permutazione
     std::ifstream ordering_file("ordering.txt");

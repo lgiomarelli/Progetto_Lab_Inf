@@ -67,7 +67,7 @@ int main()
     std::vector<Triplet> A_orig; // Vettore per memorizzare le triplette della matrice A_orig
     std::vector<Triplet> A_reordered; // Vettore per memorizzare le triplette della matrice A_reordered
 
-    // Diagonale principale: A(i, i) = +4.0
+    // Diagonale principale: A(i, i) = diag val
     for (int i = 0; i < total_nodes; ++i) 
     {
         A_orig.push_back({i, i, diag_val});
